@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { WorkspaceSidebar } from '@/components/WorkspaceSidebar';
+import { Layout } from '@/components/Layout';
 
 export default function NewMessage() {
   const [search, setSearch] = useState('');
@@ -45,8 +45,7 @@ export default function NewMessage() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <WorkspaceSidebar />
+    <Layout>
       <div className="flex flex-col flex-1">
         {/* Header */}
         <div className="border-b border-border px-6 py-4">
@@ -123,6 +122,6 @@ export default function NewMessage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
