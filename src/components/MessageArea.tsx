@@ -6,6 +6,7 @@ import { useWorkspaceStore } from '@/store/useWorkspaceStore';
 import { useChannels } from '@/hooks/useChannels';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChannelWelcome } from './ChannelWelcome';
@@ -18,7 +19,8 @@ export const MessageArea = () => {
   const { activeChannel, toggleSidebar, sidebarCollapsed, setActiveChannel } = useWorkspaceStore();
   const { channels } = useChannels();
   const { user } = useAuth();
-  const { messages, loading, sendMessage, deleteMessage } = useMessages(activeChannel);
+  const { profile } = useProfile(user?.id);
+  const { messages, loading, sendMessage, deleteMessage } = useMessages(activeChannel, profile?.username);
   const [messageInput, setMessageInput] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [showMentions, setShowMentions] = useState(false);

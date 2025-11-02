@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 export interface Message {
   id: string;
@@ -20,7 +21,7 @@ export interface Message {
   }>;
 }
 
-export const useMessages = (channelId: string | undefined) => {
+export const useMessages = (channelId: string | undefined, currentUsername?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,9 +76,47 @@ export const useMessages = (channelId: string | undefined) => {
           table: 'messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
+        async (payload) => {
           if (payload.eventType === 'DELETE') {
             setMessages(prev => prev.filter(m => m.id !== payload.old.id));
+          } else if (payload.eventType === 'INSERT' && currentUsername) {
+            // Check for mentions in new messages
+            const newMessage = payload.new as any;
+            const mentionRegex = /@(\w+)/g;
+            const mentions = [...newMessage.content.matchAll(mentionRegex)].map(m => m[1]);
+            
+            if (mentions.includes(currentUsername)) {
+              // Get current user ID to avoid self-notification
+              const { data: { user } } = await supabase.auth.getUser();
+              
+              if (user && newMessage.user_id !== user.id) {
+                // Fetch sender profile and channel name
+                const { data: senderProfile } = await supabase
+                  .from('profiles')
+                  .select('display_name, username')
+                  .eq('id', newMessage.user_id)
+                  .single();
+                
+                const { data: channelData } = await supabase
+                  .from('channels')
+                  .select('name')
+                  .eq('id', channelId)
+                  .single();
+                
+                const senderName = senderProfile?.display_name || senderProfile?.username || 'Someone';
+                const channelName = channelData?.name || 'unknown channel';
+                const messagePreview = newMessage.content.length > 100 
+                  ? newMessage.content.substring(0, 100) + '...' 
+                  : newMessage.content;
+                
+                toast({
+                  title: `${senderName} mentioned you in #${channelName}`,
+                  description: messagePreview,
+                });
+              }
+            }
+            
+            fetchMessages();
           } else {
             fetchMessages();
           }
