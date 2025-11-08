@@ -72,95 +72,16 @@ export const TopBar = () => {
         </div>
       </div>
 
-      {/* Help & Profile Buttons */}
+      {/* Help Button */}
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={toggleHelpSidebar}
-          className="h-7 px-3 text-foreground hover:bg-[hsl(var(--slack-purple-hover))]"
+          className="h-7 w-7 text-[hsl(var(--slack-text-muted))] hover:text-foreground hover:bg-[hsl(var(--slack-purple-hover))]"
         >
-          Help
+          <HelpCircle className="h-4 w-4" />
         </Button>
-
-        {/* Profile Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full"
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={profile?.avatar_url} />
-                <AvatarFallback className="bg-primary/20 text-foreground">
-                  {profile?.display_name?.[0] || profile?.username?.[0] || 'U'}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 bg-[#1A1D21] border-[#424242] z-50">
-            <div className="px-3 py-3 border-b border-[#424242]">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile?.avatar_url} />
-                  <AvatarFallback className="bg-primary/20">
-                    {profile?.display_name?.[0] || profile?.username?.[0] || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-foreground truncate">
-                    {profile?.display_name || profile?.username || 'User'}
-                  </div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                    <span>Active</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="py-1">
-              <DropdownMenuItem className="cursor-pointer">
-                <Smile className="mr-2 h-4 w-4" />
-                Update your status
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator className="bg-[#424242]" />
-            <div className="py-1">
-              <DropdownMenuItem className="cursor-pointer">
-                Set yourself as away
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <span className="mr-2">Pause notifications</span>
-                <span className="ml-auto text-xs text-muted-foreground">On</span>
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator className="bg-[#424242]" />
-            <div className="py-1">
-              <DropdownMenuItem className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                Preferences
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator className="bg-[#424242]" />
-            <div className="py-1">
-              <DropdownMenuItem 
-                className="cursor-pointer text-foreground"
-                onClick={async () => {
-                  await signOut();
-                  navigate('/');
-                }}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out of Debugging Demons
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </header>
   );

@@ -1,16 +1,26 @@
-import { Home, MessageSquare, Bell, Files, MoreHorizontal, Zap } from 'lucide-react';
+import { Home, MessageSquare, Bell, Files, MoreHorizontal, Zap, User, Settings, LogOut, Smile } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { SidebarHoverPanel } from './SidebarHoverPanel';
+import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/', showLabel: true, hasPanel: false },
@@ -23,6 +33,8 @@ const navItems = [
 export const MainSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  const { profile } = useProfile(user?.id);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [openPanel, setOpenPanel] = useState<'dms' | 'activity' | 'files' | 'more' | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -156,6 +168,92 @@ export const MainSidebar = () => {
             </AnimatePresence>
           </div>
         ))}
+
+        {/* Spacer to push profile to bottom */}
+        <div className="flex-1" />
+
+        {/* Profile at bottom */}
+        <DropdownMenu>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <button className="w-12 h-12 rounded-lg hover:bg-[hsl(var(--slack-purple-hover))] transition-colors flex items-center justify-center relative">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={profile?.avatar_url} />
+                    <AvatarFallback className="bg-primary/20 text-foreground text-sm">
+                      {profile?.display_name?.[0] || profile?.username?.[0] || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[hsl(var(--slack-purple-dark))]" />
+                </button>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="bg-popover border-border">
+              <div className="font-medium text-sm">{profile?.display_name || profile?.username || 'User'}</div>
+            </TooltipContent>
+          </Tooltip>
+          <DropdownMenuContent side="right" align="start" className="w-64 bg-[#1A1D21] border-[#424242] z-50">
+            <div className="px-3 py-3 border-b border-[#424242]">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={profile?.avatar_url} />
+                  <AvatarFallback className="bg-primary/20">
+                    {profile?.display_name?.[0] || profile?.username?.[0] || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-foreground truncate">
+                    {profile?.display_name || profile?.username || 'User'}
+                  </div>
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span>Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="py-1">
+              <DropdownMenuItem className="cursor-pointer">
+                <Smile className="mr-2 h-4 w-4" />
+                Update your status
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator className="bg-[#424242]" />
+            <div className="py-1">
+              <DropdownMenuItem className="cursor-pointer">
+                Set yourself as away
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <span className="mr-2">Pause notifications</span>
+                <span className="ml-auto text-xs text-muted-foreground">On</span>
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator className="bg-[#424242]" />
+            <div className="py-1">
+              <DropdownMenuItem className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                Preferences
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator className="bg-[#424242]" />
+            <div className="py-1">
+              <DropdownMenuItem 
+                className="cursor-pointer text-foreground"
+                onClick={async () => {
+                  await signOut();
+                  navigate('/');
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out of Debugging Demons
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TooltipProvider>
     </aside>
   );
