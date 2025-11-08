@@ -1,9 +1,8 @@
-import { ChevronLeft, ChevronRight, RotateCcw, Search, HelpCircle, Users, Gift, MoreVertical, X, Bell, Clock, Smile, Video } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Search, HelpCircle, Gift, MoreVertical, X, Bell, Clock, Smile, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useWorkspaceStore } from '@/store/useWorkspaceStore';
-import { useWorkspaceMembers } from '@/hooks/useWorkspaceMembers';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +21,6 @@ import { useState } from 'react';
 
 export const TopBar = () => {
   const navigate = useNavigate();
-  const { toggleMembersSidebar, membersSidebarOpen } = useWorkspaceStore();
-  const { totalCount } = useWorkspaceMembers();
   const [helpOpen, setHelpOpen] = useState(false);
 
   const handleBack = () => {
@@ -76,19 +73,8 @@ export const TopBar = () => {
         </div>
       </div>
 
-      {/* Members & Help Buttons */}
+      {/* Help & More Buttons */}
       <div className="flex items-center gap-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleMembersSidebar}
-          className={`h-7 px-3 text-[hsl(var(--slack-text-muted))] hover:text-foreground hover:bg-[hsl(var(--slack-purple-hover))] ${
-            membersSidebarOpen ? 'bg-[hsl(var(--slack-purple-hover))] text-foreground' : ''
-          }`}
-        >
-          <Users className="h-4 w-4 mr-1.5" />
-          <span className="text-xs">{totalCount}</span>
-        </Button>
         <Button
           variant="ghost"
           size="icon"

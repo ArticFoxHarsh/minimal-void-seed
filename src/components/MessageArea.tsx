@@ -190,7 +190,7 @@ export const MessageArea = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen">
+    <div className="flex-1 flex flex-col overflow-hidden">
       {/* Channel Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
